@@ -8,8 +8,8 @@ GPM_LINK=$(BIN)/gpm-link
 GVP=$(BIN)/gvp
 
 ## @todo should use "$(GVP) in", but that fails
-SOURCES=$(shell go list -f '{{range .GoFiles}}{{.}} {{end}}' . )
-TEST_SOURCES=$(shell go list -f '{{range .TestGoFiles}}{{ $$.Dir }}/{{.}} {{end}}' . | sed -e "s@$(PWD)/@@g" )
+SOURCES=$(shell go list -f '{{range .GoFiles}}{{ $$.Dir }}/{{.}} {{end}}' ./... | sed -e "s@$(PWD)/@@g" )
+PACKAGES=sender libproc
 
 .PHONY: all devtools deps test build clean rpm
 
@@ -53,8 +53,8 @@ devtools: $(BIN)/ginkgo $(BIN)/mockery
 deps: .godeps/.gpm_installed
 
 ## run tests
-test: $(BIN)/ginkgo $(TEST_SOURCES)
-	$(GVP) in $(BIN)/ginkgo
+test: $(BIN)/ginkgo
+	$(GVP) in $(BIN)/ginkgo $(PACKAGES)
 
 ## build the binary
 ## augh!  gvp shell escaping!!
