@@ -2,6 +2,7 @@ package main
 
 import (
     "os"
+    "io/ioutil"
     "fmt"
     
     riemannSender "github.com/bluestatedigital/riemann-cli/sender"
@@ -61,12 +62,20 @@ func main() {
         // Only log the warning severity or above.
         log.SetLevel(log.DebugLevel)
     }
+    
+    if opts.Event.Description == "" {
+        bytes, err := ioutil.ReadAll(os.Stdin)
+        checkError("error reading from stdin", err)
+        opts.Event.Description = string(bytes)
+    }
 
     addr := fmt.Sprintf("%s:%d", opts.RiemannHost, opts.RiemannPort)
     log.Debugf("connecting to %s with %s", addr, opts.Proto)
     
     riemann, err := raidman.Dial(opts.Proto, addr)
     checkError("connecting to Riemann", err)
+    
+    defer riemann.Close()
     
     log.Debug("creating sender")
     sender := riemannSender.NewSender(riemann)
