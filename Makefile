@@ -70,17 +70,13 @@ clean:
 	rm -rf stage .godeps release
 
 rpm: build
-	mkdir -p stage/rpm/usr/bin stage/rpm/etc/logrotate.d stage/rpm/etc/sysconfig stage/rpm/etc/rc.d/init.d
+	mkdir -p stage/rpm/usr/bin stage/rpm/etc
 	
 	cp stage/$(NAME) stage/rpm/usr/bin/
+	chmod 555 stage/rpm/usr/bin/$(NAME)
 	
 	## config file
-	cp etc/sysconfig stage/rpm/etc/sysconfig/$(NAME)
-	cp etc/riemann-consul-receiver.logrotate stage/rpm/etc/logrotate.d/$(NAME)
-	
-	## init script
-	cp etc/sysvinit.sh stage/rpm/etc/rc.d/init.d/$(NAME)
-	chmod 555 stage/rpm/etc/rc.d/init.d/$(NAME)
+	cp etc/riemann.ini stage/rpm/etc/
 
 	cd stage && fpm \
 	    -s dir \
@@ -88,6 +84,5 @@ rpm: build
 	    -n $(NAME) \
 	    -v $(VER) \
 	    --rpm-use-file-permissions \
-	    --config-files /etc/sysconfig/$(NAME) \
 	    -C rpm \
 	    etc usr
