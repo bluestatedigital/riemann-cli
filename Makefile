@@ -1,6 +1,6 @@
 NAME=riemann-cli
 ## tags are like v1.0.0
-VER=$(shell git describe --always --dirty | sed -e 's/^v//g' )
+VER:=$(shell git describe --always --dirty | sed -e 's/^v//g' )
 BIN=.godeps/bin
 
 GPM=$(BIN)/gpm
@@ -8,8 +8,8 @@ GPM_LINK=$(BIN)/gpm-link
 GVP=$(BIN)/gvp
 
 ## @todo should use "$(GVP) in", but that fails
-SOURCES=$(shell go list -f '{{range .GoFiles}}{{ $$.Dir }}/{{.}} {{end}}' ./... | sed -e "s@$(PWD)/@@g" )
-PACKAGES=sender libproc
+SOURCES:=$(shell go list -f '{{range .GoFiles}}{{ $$.Dir }}/{{.}} {{end}}' ./... | sed -e "s@$(PWD)/@@g" )
+PACKAGES:=$(shell go list -f '{{.Name}}' ./... )
 
 .PHONY: all devtools deps test build clean rpm
 
